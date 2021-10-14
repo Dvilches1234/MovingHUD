@@ -1,0 +1,11 @@
+{
+  "name": "dev.movinghud",
+  "version": "0.1.1",
+  "displayName": "Moving HUD",
+  "description": "This package is made to move the hud from the game to a smartphone",
+  "unity": "2019.4",
+  "keywords": [
+    "HUD",
+    "Smartphone"
+  ]
+}

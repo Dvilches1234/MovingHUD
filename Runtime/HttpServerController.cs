@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Collections;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using UnityEngine;
-using ProtocolType = System.Net.Sockets.ProtocolType;
+
 
 namespace MovingHud
 {
@@ -16,7 +15,7 @@ namespace MovingHud
     public class HttpServerController : MonoBehaviour
     {
         public string WEB_DIR = "/root/web";
-        public int serverPort = 80;
+        private int serverPort = 80;
         public IPAddress IP { get; set; }
         private Socket _httpServer;
 

@@ -8,12 +8,11 @@ namespace MovingHud
     public class ServersController : MonoBehaviour
     {
         public static bool ServersOn = false;
-
+        public string HUDTag = "HUD";
 
         private HttpServerController _httpServer;
         private WSServerController _wsServer;
         private WSClientController _wsClient;
-
         public void Awake()
         {
             DontDestroyOnLoad(this.gameObject);
@@ -37,7 +36,7 @@ namespace MovingHud
                 if (!_wsClient.IsOpen())
                     _wsClient.StartClient();
             }
-
+            HideHud();
         }
 
         public void StartServers()
@@ -47,6 +46,19 @@ namespace MovingHud
             _httpServer.StartServer();
             _wsClient.StartClient();
 
+        }
+        // called first
+
+        public void HideHud()
+        {
+            if (ServersOn)
+            {
+                GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(HUDTag);
+                foreach (GameObject gameObject in gameObjects)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
         }
 
     }

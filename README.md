@@ -1,4 +1,4 @@
-# MovingHUD.0.0.1
+# MovingHUD
 This Unity package was made to move elements from the HUD to a web browser in a smartphone. This is achived by a creating an HTTP server to host a website and a WebSocket Server and a Websocket Client to send data in real time to the website. Both server are made to be hosted in the local network.
 
 ## Installing instruction.

@@ -35,3 +35,8 @@ In your code you need to add this simple lines of code to your project in the Up
 In this case, we have a variable called points and if the servers are running, it add the value to a dictionary. This dictionary is constantly checked for changes and if a value is updated it is send from the client to the server in a JSON.  
 
 Then you can call the StarServers method in the ServersController component from a button or from wherever you prefer to start running both the servers and the client.
+
+
+## Example
+
+In this link https://github.com/Dvilches1234/root is an example a web page created for the HUD of a game called Artifact that you also can find here: https://github.com/Svartskogen/Artifact

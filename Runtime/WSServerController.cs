@@ -74,6 +74,11 @@ namespace MovingHud
             _qrSprite.sprite = Sprite.Create(texture, rectangle, new Vector2(0.5f, 0.5f), 128);
         }
 
+        public void StopServer()
+        {
+            if(isOpen())
+                _wsServer.Stop();
+        }
 
 
     }

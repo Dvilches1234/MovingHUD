@@ -13,6 +13,7 @@ namespace MovingHud
         private HttpServerController _httpServer;
         private WSServerController _wsServer;
         private WSClientController _wsClient;
+        private List<GameObject> _hudElements;
         public void Awake()
         {
             DontDestroyOnLoad(this.gameObject);
@@ -23,6 +24,7 @@ namespace MovingHud
             _httpServer = GetComponent<HttpServerController>();
             _wsServer = GetComponent<WSServerController>();
             _wsClient = GetComponent<WSClientController>();
+            _hudElements = new List<GameObject>();
         }
 
         public void Update()
@@ -45,7 +47,14 @@ namespace MovingHud
             _wsServer.StartServer();
             _httpServer.StartServer();
             _wsClient.StartClient();
+        }
 
+        public void StopServers()
+        {
+            _wsClient.StopClient();
+            _httpServer.StopServer();
+            _wsServer.StopServer();
+            ServersOn = false;
         }
         // called first
 
@@ -56,8 +65,30 @@ namespace MovingHud
                 GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(HUDTag);
                 foreach (GameObject gameObject in gameObjects)
                 {
+                    _hudElements.Add(gameObject);
                     gameObject.SetActive(false);
                 }
+            }
+            else
+            {
+                foreach (GameObject gameObject in _hudElements)
+                {
+                    if (gameObject != null)
+                    {
+                        gameObject.SetActive(true);
+                    }
+                    
+                }
+            }
+        }
+
+        public void ShowHud()
+        {
+            
+            GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(HUDTag);
+            foreach (GameObject gameObject in gameObjects)
+            {
+                gameObject.SetActive(true);
             }
         }
 

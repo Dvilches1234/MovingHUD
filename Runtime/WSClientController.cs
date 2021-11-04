@@ -44,7 +44,6 @@ namespace MovingHud
             string dataJSON = JsonConvert.SerializeObject(_data);
             if (dataJSON != _oldData)
             {
-                Debug.Log(dataJSON);
                 _ws.Send(dataJSON);
                 _oldData = dataJSON;
             }
@@ -65,6 +64,12 @@ namespace MovingHud
         public bool IsOpen()
         {
             return _ws.IsAlive;
+        }
+
+        public void StopClient()
+        {
+            if(IsOpen())
+                _ws.Close();
         }
     }
 }

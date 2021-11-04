@@ -15,12 +15,12 @@ namespace MovingHud
     public class HttpServerController : MonoBehaviour
     {
         public string WEB_DIR = "/root/web";
-        private int serverPort = 80;
+        public  int serverPort = 80;
         public IPAddress IP { get; set; }
         private Socket _httpServer;
 
         private Thread _thread;
-
+        private string header = "";
         
 
         private void Update()
@@ -31,9 +31,8 @@ namespace MovingHud
         public void StartServer()
         {
             IP = GetLocalIPAddress();
-            Console.WriteLine("");
             WEB_DIR = Application.dataPath + WEB_DIR;
-            Debug.Log((WEB_DIR));
+            //Debug.Log((WEB_DIR));
             try
             {
                 _httpServer = new Socket(SocketType.Stream, ProtocolType.Tcp);
@@ -60,13 +59,10 @@ namespace MovingHud
                 IPEndPoint endpoint = new IPEndPoint(IP, serverPort);
                 _httpServer.Bind(endpoint);
                 _httpServer.Listen(10);
-                Debug.Log(endpoint.Address);
-                Debug.Log(endpoint.Port);
                 StartListeningForConnection();
             }
             catch (Exception ex)
             {
-                Debug.Log("Coudnt start");
                 Debug.Log(ex.Message);
             }
         }
@@ -89,8 +85,6 @@ namespace MovingHud
                     if (data.IndexOf("\r\n") > -1)
                         break;
                 }
-
-                Debug.Log("---" + dir);
                 string file;
                 if (dir == "/")
                     file = WEB_DIR + "/index.html";
@@ -98,32 +92,38 @@ namespace MovingHud
                     file = WEB_DIR + dir;
 
                 FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Exists)
-                    Debug.Log("Pagw  found");
-                else
-                {
-                    Debug.Log("Pag not found");
-                }
-
+                //Debug.Log(file);
+                FileInfo headerInfo = new FileInfo(WEB_DIR + "/Header");
                 try
                 {
+                    header = getContentType(file);
                     FileStream fs = fileInfo.OpenRead();
                     BinaryReader reader = new BinaryReader(fs);
                     byte[] fileBytes = new byte[fs.Length];
-
+                     /*
+                    FileStream hs = headerInfo.OpenRead();
+                    BinaryReader hreader = new BinaryReader(hs);
+                    byte[] byteHeader = new byte[hs.Length];
+                    hreader.Read(byteHeader, 0, byteHeader.Length);
+                     */
+                    byte[] byteHeader = Encoding.ASCII.GetBytes(header);
+                     
+                    
+                    
                     reader.Read(fileBytes, 0, fileBytes.Length);
+                    
+                    client.SendTo(byteHeader, client.RemoteEndPoint);
+                    Debug.Log(header);
+                    Debug.Log("------------");
                     client.SendTo(fileBytes, client.RemoteEndPoint);
                 }
                 catch (Exception ex)
                 {
-                    file = WEB_DIR + "/archivo2.html";
-                    fileInfo = new FileInfo(file);
-                    FileStream fs = fileInfo.OpenRead();
-                    BinaryReader reader = new BinaryReader(fs);
-                    byte[] fileBytes = new byte[fs.Length];
-
-                    reader.Read(fileBytes, 0, fileBytes.Length);
-                    client.SendTo(fileBytes, client.RemoteEndPoint);
+                    header = getContentType(".html");
+                    byte[] byteHeader = Encoding.ASCII.GetBytes(header);
+                    byte[] message = Encoding.ASCII.GetBytes(ex.Message);
+                    client.SendTo(byteHeader, client.RemoteEndPoint);
+                    client.SendTo(message, client.RemoteEndPoint);
                 }
 
                 client.Close();
@@ -158,6 +158,41 @@ namespace MovingHud
         public int GetHTTPPort()
         {
             return serverPort;
+        }
+
+        public void StopServer()
+        {
+            if (_thread != null)
+                _thread.Abort();
+        }
+
+        public string getContentType(string file)
+        {
+            
+            string fileName = file.ToLower();
+            Debug.Log(fileName);
+            //string content = "HTTP/1.1 200 Everything is Fine\nServer: Hud_server\n";
+            ///*
+            string content = "";
+            if (fileName.Contains(".html"))
+            {
+                content = "HTTP/1.1 200 Everything is Fine\nServer: Hud_server\nContent-Type: text/html\n \n ";
+            }
+            else if (fileName.Contains(".js"))
+            {
+                content = "HTTP/1.1 200 Everything is Fine\nServer: Hud_server\nContent-Type: text/javascript\n \n";
+            }
+            else if (fileName.Contains(".png"))
+            {
+                content = "HTTP/1.1 200 Everything is Fine\nServer: Hud_server\nContent-Type: image/* \n \n";
+            }
+            else if (fileName.Contains(".jpg") || fileName.Contains(".jpeg"))
+            {
+                content = "HTTP/1.1 200 Everything is Fine\nServer: Hud_server\nContent-Type: image/jpeg\n \n";
+            }
+            //*/
+            //Debug.Log(content);
+            return content;
         }
     }
 }
